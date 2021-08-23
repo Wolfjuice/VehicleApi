@@ -2,8 +2,11 @@ package com.udacity.vehicles.service;
 
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
+import com.udacity.vehicles.client.maps.MapsClient;
+import com.udacity.vehicles.client.prices.PriceClient;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import com.udacity.vehicles.domain.Location;
 
 /**
  * Implements the car service create, read, update or delete
@@ -14,7 +17,8 @@ import org.springframework.stereotype.Service;
 public class CarService {
 
     private final CarRepository repository;
-
+    private final MapsClient mapsClient;
+    private final PriceClient priceClient;
     public CarService(CarRepository repository, MapsClient mapsClient, PriceClient priceClient) {
 
         this.repository = repository;
@@ -46,8 +50,9 @@ public class CarService {
             throw new CarNotFoundException("This car does not exist");
         }else{
             car.setPrice(priceClient.getPrice(id));
-            Location currentloc = mapsClient.getAddress(car.getLocation())
-            car.setLocation(currentloc)
+            Location currentloc = mapsClient.getAddress(car.getLocation());
+            car.setLocation(currentloc);
+            repository.save(car);
             return car;
         }
 
