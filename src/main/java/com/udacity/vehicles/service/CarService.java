@@ -5,6 +5,8 @@ import com.udacity.vehicles.domain.car.CarRepository;
 import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.PriceClient;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import com.udacity.vehicles.domain.Location;
 
@@ -45,10 +47,11 @@ public class CarService {
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
-        Car car = repository.findById(id);
-        if(car == null){
+        Optional<Car> carContaner = repository.findById(id);
+        if(carContaner.isEmpty()){
             throw new CarNotFoundException("This car does not exist");
         }else{
+            Car car = carContaner.get();
             car.setPrice(priceClient.getPrice(id));
             Location currentloc = mapsClient.getAddress(car.getLocation());
             car.setLocation(currentloc);
@@ -101,20 +104,11 @@ public class CarService {
      * @param id the ID number of the car to delete
      */
     public void delete(Long id) {
-        /**
-         * TODO: Find the car by ID from the `repository` if it exists.
-         *   If it does not exist, throw a CarNotFoundException
-         */
         if(repository.findById(id) == null){
             throw new CarNotFoundException("This car does not exist");
         }
-
         repository.deleteById(id);
 
-
-        /**
-         * TODO: Delete the car from the repository.
-         */
 
 
     }
